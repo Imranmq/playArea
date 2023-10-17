@@ -1,0 +1,81 @@
+<html>
+  <body>
+    <canvas
+      id="mainCanvas"
+      width="800"
+      height="600"
+      style="margin: 50px; border: 1px solid #ffff; background-color: black"
+    ></canvas>
+    <canvas
+      id="mainCanvas2"
+      width="800"
+      height="600"
+      style="margin: 50px; border: 1px solid #ffff; background-color: black"
+    ></canvas>
+  </body>
+
+  <script>
+    canvasAndScripter("mainCanvas");
+    canvasAndScripter("mainCanvas2", 120, 0.2, 2);
+    function canvasAndScripter(
+      canvasName,
+      branches = 10,
+      branchDepArg,
+      timerRotationArg
+    ) {
+      const canvas = document.getElementById(canvasName);
+      const ctx = canvas.getContext("2d");
+      const trunkLength = 100;
+      var rotation = 0;
+      var branchDep = branchDepArg ? branchDepArg : 0.05;
+      var timerRotation = timerRotationArg ? timerRotation : 1;
+
+      function drawBranch(x1, y1, length, angle, depth) {
+        if (depth === 0) {
+          return;
+        }
+
+        const x2 = x1 + Math.cos(angle) * length;
+        const y2 = y1 - Math.sin(angle) * length;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = "brown"; // Trunk color
+        ctx.lineWidth = depth;
+        ctx.stroke();
+        ctx.closePath();
+
+        drawBranch(x2, y2, length * 0.7, angle + 0.3, depth - 1);
+        drawBranch(x2, y2, length * 0.7, angle - 0.3, depth - 1);
+      }
+
+      function drawTree(numBranches, rot) {
+        const startX = canvas.width / 2;
+        const startY = canvas.height / 2;
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < numBranches; i++) {
+          const angleOffset = i * ((Math.PI * 2) / numBranches);
+          drawBranch(
+            startX,
+            startY,
+            trunkLength,
+            -Math.PI / 2 + angleOffset + rot * 0.1,
+            8
+          );
+        }
+      }
+
+      // Call the drawTree function with the desired number of branches
+      drawTree(branches, rotation); // Adjust the number of branches as needed
+      function mymethod() {
+        rotation++;
+        drawTree(branches - rotation * branchDep, rotation);
+      }
+      setInterval(mymethod, 100 - timerRotation);
+    }
+  </script>
+</html>
